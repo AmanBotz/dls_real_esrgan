@@ -2,7 +2,6 @@ import os
 import telebot
 import json
 import codecs
-import requests 
 import sys
 from telebot import types
 from collections import deque
@@ -38,7 +37,7 @@ request_queue = deque()
 # Это для очереди сообщений, должно быть 1 изначально
 is_continue = 1
 
-def process(message, file_type):
+def process(message):
 	global is_continue
 	global request_queue
 
@@ -52,7 +51,7 @@ def process(message, file_type):
 			# Берем следующее сообщение из очереди.
 			message_pop = request_queue.popleft()
 			is_continue = 0
-			res = process_requests(message_pop, file_type, bot, model, logger)
+			res = process_requests(message_pop, bot, model, logger)
 			is_continue = 1
 			
 	except Exception as n:
@@ -79,16 +78,14 @@ def handle_upscale_command(message):
 # Принимаем все фото сообщения и увеличиваем
 @bot.message_handler(content_types=['photo'])
 def handle_request(message):
-	file_type = 'photo'
 	bot.reply_to(message, 'Обрабатываем...')
-	process(message, file_type)
+	process(message)
 	
 
 @bot.message_handler(content_types=['document'])
 def handle_document(message):
-	file_type = 'document'
 	bot.reply_to(message, 'Обрабатываем...')
-	process(message, file_type)
+	process(message)
 
 
 

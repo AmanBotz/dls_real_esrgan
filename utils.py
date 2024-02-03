@@ -12,7 +12,7 @@ def get_upscale(img_path: str, model) -> str:
 
 
 # Обработчик вопроса
-def process_requests(message, file_type: str, bot, model, logger) -> int:
+def process_requests(message, bot, model, logger) -> int:
 	user_id = message.from_user.id
 	username = message.from_user.username
 	logger.info('Запрошена картинка user_id: %s, username: %s', user_id, username)
@@ -20,7 +20,7 @@ def process_requests(message, file_type: str, bot, model, logger) -> int:
 
 	try:
 		# Запрос может придти как в виде изображения, так и в виде файла.
-		if (file_type == 'photo'):
+		if (message.content_type == 'photo'):
 			# Загружаем и сохраняем файл
 			file_info = bot.get_file(message.photo[-1].file_id)
 			downloaded_file = bot.download_file(file_info.file_path)
@@ -31,20 +31,24 @@ def process_requests(message, file_type: str, bot, model, logger) -> int:
 			with open(img_path, 'wb') as new_file:
 				new_file.write(downloaded_file)
 
-		if (file_type == 'document'):
+		if (message.content_type == 'document'):
 			file_info = bot.get_file(message.document.file_id)
-			file_extension = file_info.file_path.split('.')[-1]
+			if file_info is not None:
+				file_extension = file_info.file_path.split('.')[-1]
 
-			if file_extension in ['jpg', 'jpeg', 'png']:
-				downloaded_file = bot.download_file(file_info.file_path)
-				random_filename = str(uuid.uuid4())
-				img_path = './incoming/' + random_filename + '.' + file_extension
+				if file_extension in ['jpg', 'jpeg', 'png']:
+					downloaded_file = bot.download_file(file_info.file_path)
+					random_filename = str(uuid.uuid4())
+					img_path = './incoming/' + random_filename + '.' + file_extension
 
-				with open(img_path, 'wb') as new_file:
-					new_file.write(downloaded_file)
+					with open(img_path, 'wb') as new_file:
+						new_file.write(downloaded_file)
+				else:
+					bot.reply_to(message, 'Надо фотографию ☺️')
+					return 0
 			else:
-				bot.reply_to(message, 'Надо фотографию ☺️')
-				return 0
+				logger.error('Не удалось получить иниформацию о файле')
+				bot.reply_to(message, 'Не удалось получить иниформацию о файле')
 
 
 		# Увеличиваем, сохраняем, отправляем как файл
@@ -58,11 +62,10 @@ def process_requests(message, file_type: str, bot, model, logger) -> int:
 		os.remove(img_path)
 		os.remove(img_upscaled_path)
 
-		# Возвращаем возможность обработки.
 		return 1
 
 	except Exception as n:
 		logger.error(n)
 		bot.reply_to(message, 'Произошла ошибка при обработке запроса')
-		# Возвращаем возможность обработки.
+		
 		return 1
