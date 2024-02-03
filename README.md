@@ -29,7 +29,7 @@
 
 Исходное изображение:
 
-![](incoming/woman.png)
+![](incoming/woman.jpg)
 
 Результат:
 
