@@ -50,6 +50,11 @@ def send_start(message):
 def handle_request(message):
 	bot.reply_to(message, 'Отправьте фото для увеличения')
 
+
+@bot.message_handler(commands=['upscale_image'])
+def handle_upscale_command(message):
+	bot.reply_to(message, 'Отправьте фото для увеличения')
+
 # Принимаем все фото сообщения и увеличиваем
 @bot.message_handler(content_types=['photo'])
 def handle_request(message):
