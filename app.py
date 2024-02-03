@@ -38,7 +38,28 @@ request_queue = deque()
 # Это для очереди сообщений, должно быть 1 изначально
 is_continue = 1
 
+def process(message, file_type):
+	global is_continue
+	global request_queue
 
+	request_queue.append(message)
+	try:
+		# Пока в очереди есть сообщения и можно продолжать -- обрабатываем. 
+		# Если модель уже отвечает кому-то, но в очереди есть сообщения -- ждем is_continue = 1, 
+		# и потом обрабатываем следующее в очереди (а она у нас global)
+
+		while (len(request_queue) > 0 and is_continue == 1):
+			# Берем следующее сообщение из очереди.
+			message_pop = request_queue.popleft()
+			is_continue = 0
+			res = process_requests(message_pop, file_type, bot, model, logger)
+			is_continue = 1
+			
+	except Exception as n:
+		logger.error(n)
+		bot.reply_to(message, 'Произошла ошибка при обработке запроса')
+
+		return 1
 
 
 @bot.message_handler(commands=['start'])
@@ -58,53 +79,16 @@ def handle_upscale_command(message):
 # Принимаем все фото сообщения и увеличиваем
 @bot.message_handler(content_types=['photo'])
 def handle_request(message):
-	global is_continue
-	global request_queue
-
-	request_queue.append(message)
-
 	file_type = 'photo'
 	bot.reply_to(message, 'Обрабатываем...')
-	try:
-		# Пока в очереди есть сообщения и можно продолжать -- обрабатываем. 
-		# Если модель уже отвечает кому-то, но в очереди есть сообщения -- ждем is_continue = 1, 
-		# и потом обрабатываем следующее в очереди (а она у нас global)
-
-		while (len(request_queue) > 0 and is_continue == 1):
-			# Берем следующее сообщение из очереди.
-			message_pop = request_queue.popleft()
-			is_continue = 0
-			res = process_requests(message_pop, file_type, bot, model, logger)
-			is_continue = 1
-			
-	except Exception as n:
-		logger.error(n)
-		bot.reply_to(message, 'Произошла ошибка при обработке запроса')
-
-		return 1
+	process(message, file_type)
+	
 
 @bot.message_handler(content_types=['document'])
 def handle_document(message):
-	global is_continue
-	global request_queue
-
-	request_queue.append(message)
-
 	file_type = 'document'
 	bot.reply_to(message, 'Обрабатываем...')
-	try:
-		while (len(request_queue) > 0 and is_continue == 1):
-			# Берем следующее сообщение из очереди.
-			message_pop = request_queue.popleft()
-			is_continue = 0
-			res = process_requests(message_pop, file_type, bot, model, logger)
-			is_continue = 1
-
-	except Exception as n:
-		logger.error(n)
-		bot.reply_to(message, 'Произошла ошибка при обработке запроса')
-		# Возвращаем возможность обработки.
-		return 1
+	process(message, file_type)
 
 
 
