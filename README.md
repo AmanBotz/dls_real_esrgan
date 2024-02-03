@@ -19,20 +19,20 @@
 
 Исходное изображение:
 
-![](inputs/lr_image.png)
+![](incoming/dls.png)
 
 Результат:
 
-![](results/sr_image.png)
+![](upscaled/dls_upscaled.png)
 
 ---
 
 Исходное изображение:
 
-![](inputs/lr_face.png)
+![](incoming/woman.png)
 
 Результат:
 
-![](results/sr_face.png)
+![](upscaled/woman_upscaled.png)
 
 ---
