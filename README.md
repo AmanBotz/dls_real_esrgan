@@ -2,7 +2,7 @@
 Данный телеграм бот увеличивает изображение в 4 раза.
 Я взял готовую претрейн [модель](https://github.com/ai-forever/Real-ESRGAN/tree/main) от ai-forever (зеленый известный *стартап*), которую они сделали на основе Real-ESRGAN. 
 
-Их модель в сравнении с оригиналом Real-ESRGAN дотренирована на лица.
+Их модель в сравнении с оригиналом Real-ESRGAN дотренирована на лица. Веса находятся на [huggingface](https://huggingface.co/ai-forever/Real-ESRGAN/tree/main)
 
 Обвязка модели и сам Pytorch код использован также из репозитория ai-forever.
 
