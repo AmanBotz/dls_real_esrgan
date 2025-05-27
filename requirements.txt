@@ -7,3 +7,4 @@ tqdm
 huggingface-hub
 pyTelegramBotAPI
 python-dotenv
+flask
