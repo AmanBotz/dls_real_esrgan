@@ -6,5 +6,6 @@ Pillow==9.2.0
 tqdm==4.64.0
 requests==2.28.1
 python-dotenv==0.20.0
-flask==2.2.2
+flask
+werkzeug
 huggingface_hub==0.14.1
