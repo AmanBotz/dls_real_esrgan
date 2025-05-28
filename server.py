@@ -1,11 +1,15 @@
 from flask import Flask
-import app  # Starts your Telegram bot
+import threading
+import app  # starts your Telegram bot
 
 flask_app = Flask(__name__)
 
 @flask_app.route('/')
 def index():
-    return "Bot is running"
+    return "Telegram bot is running"
+
+def run_flask():
+    flask_app.run(host='0.0.0.0', port=8000)
 
 if __name__ == '__main__':
-    flask_app.run(host='0.0.0.0', port=8000)
+    threading.Thread(target=run_flask).start()
